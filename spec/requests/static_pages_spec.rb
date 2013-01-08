@@ -9,13 +9,13 @@ describe "StaticPages" do
       get static_pages_home_path
       response.status.should be(200)
     end
-    it "should have the content 'Training App'" do
+    it "should have the content 'Ruby on Rails Training'" do
       visit '/static_pages/home'
-      page.should have_content('Training App')
+      page.should have_content('Ruby on Rails Training')
     end
-    it "should have the h1 'Home'" do
+    it "should have the h1 'Training Application'" do
       visit '/static_pages/home'
-      page.should have_selector('h1', :text => 'Home')
+      page.should have_selector('h1', :text => 'Training Application')
     end
     it "should have the base title" do
       visit '/static_pages/home'
@@ -46,6 +46,17 @@ describe "StaticPages" do
     it "should have the title 'About Us'" do
       visit '/static_pages/about'
       page.should have_selector('title', :text => "#{base_title} | About Us")
+    end
+  end
+  
+  describe "Contact page" do
+    it "should have the h1 'Contact'" do
+      visit '/static_pages/contact'
+      page.should have_selector('h1', :text => 'Contact')
+    end
+    it "should have the title 'Contact'" do
+      visit '/static_pages/contact'
+      page.should have_selector('title', :text => "#{base_title} | Contact")
     end
   end
 end
