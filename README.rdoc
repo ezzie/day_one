@@ -1,0 +1,3 @@
+== Welcome to Ruby on Rails Training
+
+This is day one practice application @ Ruby on Rails training by Ezzie
