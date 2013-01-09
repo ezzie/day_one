@@ -1,0 +1,161 @@
+Create controller for static content
+
+0. Close all ruby programs from task manager
+1. command - git checkout -b static-pages
+2. Html pages in public folder
+3. Generate static controller - rails generate controller StaticPages home help --no-test-framework
+4. Understand files generated
+5. command - rake routes - get "static_pages/home" - StaticPagesController.home
+6. command - rails s
+7. command - git add .
+8. command - git commit -m"Add a StaticPages controller"
+9. Go to presentation slide 23
+
+************ EXCERCISE - Undoing things - ************************
+
+Behaviour Driven Development - First Test Case
+0. Integration tests, known as request specs in the context of RSpec, allow us to simulate the actions of a user interacting with our application using a web browser.
+1. Capybara provides natural-language syntax
+2. command - rails generate integration_test static_pages
+3. Understand and change generated code in static_pages_spec.rb (testing route)
+describe "StaticPages" do
+  describe "GET /static_pages/home" do
+    it "should work" do
+      get static_pages_home_path
+      response.status.should be(200)
+    end
+  end
+end
+4. command - bundle exec rspec spec/requests/static_pages_spec.rb
+5. Write another test case
+describe "Home page" do
+  describe "GET /static_pages/home" do
+    it "should work" do
+      get static_pages_home_path
+      response.status.should be(200)
+    end
+    
+	it "should have the content 'Training App'" do
+		visit '/static_pages/home'
+		page.should have_content('Training App')
+	end
+  end
+end
+6. visit is method and page is instance variable provided by capybara. Run test case. They will fail.
+7. Change home.html.erb
+<h1>Training Application</h1>
+<p>
+  This is the home page for the
+  <a href="http://github.com/ezzie">Ruby on Rails Training</a>
+  by Ezzie Infosystems.
+</p>
+8. command - bundle exec rspec spec/requests/static_pages_spec.rb - now they will pass
+9. Add new test case as below
+describe "StaticPages" do
+  describe "GET /static_pages/home" do
+    it "should work" do
+      get static_pages_home_path
+      response.status.should be(200)
+    end
+
+    it "should have the h1 'Ruby on Rails Training'" do
+      visit '/static_pages/home'
+      page.should have_content('Ruby on Rails Training')
+    end
+    
+    it "should have the h1 'Training Application'" do
+      visit '/static_pages/home'
+      page.should have_selector('h1', :text => 'Training Application')
+    end
+  end
+end
+
+************ EXCERCISE - Do above excercise for help ************************
+
+1. add test cases for help
+describe "GET /static_pages/help" do
+    it "should have the content 'Help'" do
+      visit '/static_pages/help'
+      page.should have_content('Help')
+    end
+    
+    it "should have the h1 'Help'" do
+      visit '/static_pages/help'
+      page.should have_selector('h1', :text => 'Help')
+    end
+  end
+2. Run test that will fail - bundle exec rspec spec/requests/static_pages_spec.rb
+3. Update help.html.erb
+<h1>Help</h1>
+<p>
+  Get help on the Ruby on Rails Training at the
+  <a href="http://github.com/ezzie">Rails Training help page</a>
+</p>
+12. Run test again - bundle exec rspec spec/requests/static_pages_spec.rb - now they will pass
+
+TEST FIRST DEVELOPMENT - Adding a page
+0. RGR - Red, Green, Refractor cycle
+1. Add new test case for about
+  describe "About page" do
+    it "should have the content 'About Us'" do
+      visit '/static_pages/about'
+      page.should have_content('About Us')
+    end
+  end
+2. bundle exec rspec spec/requests/static_pages_spec.rb - look at routing error in logs
+3. Add this line to routes.rb file - get "static_pages/about"
+4. bundle exec rspec spec/requests/static_pages_spec.rb - look at StaticPagesController error in logs
+5. Add below action in StaticPagesController
+def help
+end
+6. bundle exec rspec spec/requests/static_pages_spec.rb - look at Missing template static_pages/about error in logs
+7. Add new file called about.html.erb with following contents
+<h1>About Us</h1>
+<p>
+  The <a href="http://github.com/ezzie">Ruby on Rails Training</a>
+  is provided by <a href="http://www.ezzie.in">Ezzie Infosystems</a> to teach web 2.0 development.
+</p>
+8. bundle exec rspec spec/requests/static_pages_spec.rb - Now all tests will be passes
+
+require 'spec_helper'
+
+describe "StaticPages" do
+  describe "GET /static_pages/home" do
+    it "should work" do
+      get static_pages_home_path
+      response.status.should be(200)
+    end
+
+    it "should have the h1 'Ruby on Rails Training'" do
+      visit '/static_pages/home'
+      page.should have_content('Ruby on Rails Training')
+    end
+    
+    it "should have the h1 'Training Application'" do
+      visit '/static_pages/home'
+      page.should have_selector('h1', :text => 'Training Application')
+    end
+  end
+  
+  describe "Help page" do
+    it "should have the h1 'Help'" do
+      visit '/static_pages/help'
+      page.should have_selector('h1', :text => "Help")
+    end
+    it "should have the title 'Help'" do
+      visit '/static_pages/help'
+      page.should have_selector('title', :text => "#{base_title} | Help")
+    end
+  end
+  
+  describe "About page" do
+    it "should have the h1 'About Us'" do
+      visit '/static_pages/about'
+      page.should have_selector('h1', :text => 'About Us')
+    end
+    it "should have the title 'About Us'" do
+      visit '/static_pages/about'
+      page.should have_selector('title', :text => "#{base_title} | About Us")
+    end
+  end
+end
